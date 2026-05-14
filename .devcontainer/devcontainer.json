@@ -1,0 +1,23 @@
+{
+  "name": "agent",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "node",
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway",
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+  "mounts": [
+    "source=claude-config-${devcontainerId},target=/home/node/.claude,type=volume",
+    "source=pi-config-${devcontainerId},target=/home/node/.pi,type=volume"
+  ],
+  "containerEnv": {
+    "PI_LMSTUDIO_URL": "http://host.docker.internal:1234/v1",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+  },
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh && mkdir -p ~/.pi/agent && cp ${containerWorkspaceFolder}/.devcontainer/models.json ~/.pi/agent/models.json",
+  "waitFor": "postStartCommand"
+}
