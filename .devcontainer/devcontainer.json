@@ -16,7 +16,8 @@
   "containerEnv": {
     "PI_LMSTUDIO_URL": "http://host.docker.internal:1234/v1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-    "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "CLAUDE_CODE_OAUTH_TOKEN": "${localEnv:CLAUDE_CODE_OAUTH_TOKEN}"
   },
   "postStartCommand": "sudo /usr/local/bin/init-firewall.sh && mkdir -p ~/.pi/agent && cp ${containerWorkspaceFolder}/.devcontainer/models.json ~/.pi/agent/models.json",
   "waitFor": "postStartCommand"
