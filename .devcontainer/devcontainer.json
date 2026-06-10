@@ -18,6 +18,6 @@
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CONFIG_DIR": "/home/node/.claude"
   },
-  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh && mkdir -p ~/.pi/agent && cp ${containerWorkspaceFolder}/.devcontainer/models.json ~/.pi/agent/models.json",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh && mkdir -p ~/.pi/agent && ([ -f ~/.pi/agent/models.json ] || cp ${containerWorkspaceFolder}/.devcontainer/models.json ~/.pi/agent/models.json)",
   "waitFor": "postStartCommand"
 }

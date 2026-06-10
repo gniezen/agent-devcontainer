@@ -15,7 +15,7 @@ dcinit() {
     return 1
   fi
   local tmp=$(mktemp -d)
-  git clone --depth 1 git@github.com:gerritniezen/agent-devcontainer.git "$tmp"
+  git clone --depth 1 git@github.com:gniezen/agent-devcontainer.git "$tmp"
   cp -r "$tmp/.devcontainer" .
   rm -rf "$tmp"
   echo "Copied template into ./.devcontainer"
