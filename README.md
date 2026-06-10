@@ -25,6 +25,8 @@ dcinit() {
 
 Run `dcinit` in your workspace folder. You can then use `dc up` and `dc exec pi` or `dc exec claude`.
 
+To update Claude: `dc exec claude update`.
+
 This repository includes init-firewall.sh adapted from
 https://github.com/anthropics/claude-code (MIT licensed).
 Original copyright: Anthropic, PBC.
