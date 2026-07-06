@@ -12,6 +12,13 @@
       "models": [
         { "id": "qwen/qwen3.6-35b-a3b" }
       ]
+    },
+    "openrouter": {
+    	"baseUrl": "https://openrouter.ai/api/v1",
+  	    "api": "openai-completions",
+  	    "models": [
+    		{ "id": "z-ai/glm-5.2", "reasoning": true }
+	    ]
     }
   }
 }

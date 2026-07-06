@@ -68,7 +68,8 @@ for domain in \
    "registry.npmjs.org" \
    "api.anthropic.com" \
    "console.anthropic.com" \
-   "claude.ai"; do
+   "claude.ai" \
+   "openrouter.ai"; do
     echo "Resolving $domain..."
     ips=$(dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}')
     if [ -z "$ips" ]; then
