@@ -25,14 +25,15 @@ else
 fi
 
 # First allow DNS and localhost before any restrictions
-# Allow outbound DNS
-iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-# Allow inbound DNS responses
-iptables -A INPUT -p udp --sport 53 -j ACCEPT
-# Allow outbound SSH
-iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
-# Allow inbound SSH responses
-iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+# Allow DNS only to the resolvers in /etc/resolv.conf (not to arbitrary hosts,
+# which would leave a DNS-tunneling exfiltration path). Note: git over SSH to
+# GitHub still works without a port-22 rule because GitHub's IP ranges are in
+# the allowed-domains ipset, which matches all ports.
+while read -r resolver; do
+    iptables -A OUTPUT -p udp -d "$resolver" --dport 53 -j ACCEPT
+    iptables -A OUTPUT -p tcp -d "$resolver" --dport 53 -j ACCEPT
+    iptables -A INPUT -p udp -s "$resolver" --sport 53 -j ACCEPT
+done < <(awk '/^nameserver/ && $2 ~ /^[0-9.]+$/ {print $2}' /etc/resolv.conf)
 # Allow localhost
 iptables -A INPUT -i lo -j ACCEPT
 iptables -A OUTPUT -o lo -j ACCEPT
@@ -42,7 +43,7 @@ ipset create allowed-domains hash:net
 
 # Fetch GitHub meta information and aggregate + add their IP ranges
 echo "Fetching GitHub IP ranges..."
-gh_ranges=$(curl -s https://api.github.com/meta)
+gh_ranges=$(curl -sf --retry 4 --retry-delay 2 --retry-all-errors https://api.github.com/meta)
 if [ -z "$gh_ranges" ]; then
     echo "ERROR: Failed to fetch GitHub IP ranges"
     exit 1
@@ -105,6 +106,18 @@ iptables -A OUTPUT -d "$HOST_NETWORK" -j ACCEPT
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
+
+# All rules above are IPv4-only; drop IPv6 entirely so it can't bypass the
+# firewall. ip6tables may be unavailable in containers without IPv6 support.
+if command -v ip6tables >/dev/null 2>&1 && ip6tables -L >/dev/null 2>&1; then
+    ip6tables -F
+    ip6tables -X
+    ip6tables -P INPUT DROP
+    ip6tables -P FORWARD DROP
+    ip6tables -P OUTPUT DROP
+    ip6tables -A INPUT -i lo -j ACCEPT
+    ip6tables -A OUTPUT -o lo -j ACCEPT
+fi
 
 # First allow established connections for already approved traffic
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
