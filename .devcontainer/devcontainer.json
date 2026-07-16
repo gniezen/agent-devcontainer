@@ -11,7 +11,8 @@
   ],
   "mounts": [
     "source=claude-config-${devcontainerId},target=/home/node/.claude,type=volume",
-    "source=pi-config-${devcontainerId},target=/home/node/.pi,type=volume"
+    "source=pi-config-${devcontainerId},target=/home/node/.pi,type=volume",
+    "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind"
   ],
   "containerEnv": {
     "OPENROUTER_API_KEY": "${localEnv:OPENROUTER_API_KEY}",
