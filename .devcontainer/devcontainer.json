@@ -12,13 +12,14 @@
   "mounts": [
     "source=claude-config-${devcontainerId},target=/home/node/.claude,type=volume",
     "source=pi-config-${devcontainerId},target=/home/node/.pi,type=volume",
-    "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind"
+    "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind",
+    "source=${localEnv:HOME}/.radicle,target=/home/node/.radicle,type=bind"
   ],
   "containerEnv": {
     "OPENROUTER_API_KEY": "${localEnv:OPENROUTER_API_KEY}",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CONFIG_DIR": "/home/node/.claude"
   },
-  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh && mkdir -p ~/.pi/agent && ([ -f ~/.pi/agent/models.json ] || cp ${containerWorkspaceFolder}/.devcontainer/models.json ~/.pi/agent/models.json)",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh && mkdir -p ~/.pi/agent && ([ -f ~/.pi/agent/models.json ] || cp ${containerWorkspaceFolder}/.devcontainer/models.json ~/.pi/agent/models.json) && ([ -d ~/.claude/plugins/marketplaces/rad-skill ] || claude plugin marketplace add https://seed.radicle.garden/zvBj4kByGeQSrSy2c4H7fyK42cS8.git) && ([ -d ~/.claude/plugins/cache/rad-skill/radicle ] || claude plugin install radicle@rad-skill)",
   "waitFor": "postStartCommand"
 }

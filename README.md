@@ -27,6 +27,18 @@ Run `dcinit` in your workspace folder. You can then use `dc up` and `dc exec pi`
 
 To update Claude: `dc exec claude update`.
 
+## Radicle
+
+Your host `~/.radicle` is bind mounted in, so the container reuses your existing
+identity, config and storage, and `~/.radicle/bin` is on the container's `PATH`
+— the `rad` binaries are statically linked, so the host build runs fine inside
+the container and nothing needs installing. Don't run `rad node start` inside
+the container while a node is running on the host, as both would contend for
+the same storage and socket.
+
+The container also installs the `radicle` plugin from the `rad-skill`
+marketplace on first start.
+
 ## Updating when the scripts change
 
 Replacing the files in `.devcontainer/` (e.g. by deleting the folder and

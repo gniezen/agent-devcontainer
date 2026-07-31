@@ -18,7 +18,9 @@ RUN mkdir -p /home/node/.claude /home/node/.pi/agent && \
 
 # node-owned npm global prefix so Claude can write its own updates
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
-ENV PATH=/home/node/.npm-global/bin:$PATH
+# .radicle/bin comes from the host bind mount; the binaries are static, so they
+# run here despite the older glibc
+ENV PATH=/home/node/.npm-global/bin:/home/node/.radicle/bin:$PATH
 RUN mkdir -p /home/node/.npm-global && chown -R node:node /home/node/.npm-global
 
 USER node
